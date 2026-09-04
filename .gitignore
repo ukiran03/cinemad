@@ -1,0 +1,5 @@
+/_ref/
+*_templ.go
+/tls/
+/bin/
+.env
