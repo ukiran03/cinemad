@@ -1,0 +1,10 @@
+package pages
+
+import (
+	"ukiran03.com/cinemad/internal/models"
+	"ukiran03.com/cinemad/cmd/web/ui/html/layouts"
+)
+
+templ VirtualTerminalPage(data models.TemplateData) {
+	@layouts.Base("Virtual Terminal", data, templ.Raw(`<h1>Virtual Terminal</h1><p>Welcome to the virtual terminal page</p>`))
+}
