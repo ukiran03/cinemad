@@ -9,13 +9,13 @@ default:
 templ-gen:
     templ generate
 
-# Live reload for development with FLAGs
-dev +args="":
+# Live reload for frontend development with FLAGs
+dev_front +args="":
     wgo -file=.go -file=.templ -xfile=_templ.go templ generate ./cmd/web/ui/... :: go run ./cmd/web {{args}}
 
-# Start and Watch Api server
-run-api:
-    wgo run ./cmd/api
+# Live reload for backend/API development with FLAGs
+dev_back +args="":
+    wgo -file=.go go run ./cmd/api
 
 # Run tests with file watching
 watch-test:
@@ -44,13 +44,13 @@ start: start_front start_back
 # Starts the front end
 start_front: build_front
     @echo "Starting the front end..."
-    @STRIPE_KEY="$STRIPE_SECRET_KEY" ./bin/cinemad -port=$FRONTEND_PORT &
+    @./bin/cinemad -port=$FRONTEND_PORT &
     @echo "Front end running!"
 
 # Starts the back end
 start_back: build_back
     @echo "Starting the back end..."
-    @STRIPE_KEY="$STRIPE_SECRET_KEY" ./bin/cinemad_api -port=$BACKEND_PORT &
+    @./bin/cinemad_api -port=$BACKEND_PORT &
     @echo "Back end running!"
 
 # Stops the front end
