@@ -4,7 +4,11 @@ go 1.26.5
 
 require github.com/go-chi/chi/v5 v5.3.2
 
-require github.com/a-h/templ v0.3.1020
+require (
+	github.com/a-h/templ v0.3.1020
+	github.com/go-chi/cors v1.2.2
+	github.com/stripe/stripe-go/v72 v72.122.0
+)
 
 require (
 	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
