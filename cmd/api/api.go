@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"time"
+
+	"ukiran03.com/cinemad/internal/logger"
 )
 
 const version = "1.0.0"
@@ -43,7 +45,7 @@ func main() {
 	cfg.stripe.pubkey = os.Getenv("STRIPE_KEY")
 	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
 
-	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+	logger := logger.NewLogger()
 
 	app := &application{
 		config:  cfg,
