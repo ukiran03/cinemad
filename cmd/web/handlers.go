@@ -65,3 +65,30 @@ func (app *application) PaymentSucceeded(
 		return
 	}
 }
+
+// ChargeOnce displaus the page to buy on movie
+func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
+	movie := models.Movie{
+		ID:             1,
+		Name:           "August in the water",
+		Year:           1995,
+		Description:    "Directed by Gakuryu Ishii",
+		InventoryLevel: 10,
+		Price:          3000,
+	}
+
+	data := app.NewTemplateData(r)
+	data.StringMap["publishable_key"] = app.config.Stripe.Key
+	data.Data["movie"] = movie
+
+	err := pages.BuyOncePage(data).Render(r.Context(), w)
+	if err != nil {
+		app.logger.Error(err.Error())
+		http.Error(
+			w,
+			fmt.Sprintf("Error: %v\n", err),
+			http.StatusInternalServerError,
+		)
+		return
+	}
+}
