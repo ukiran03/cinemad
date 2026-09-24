@@ -35,8 +35,8 @@ templ buyOnePageContent(data *models.TemplateData) {
 		autocomplete="off"
 		novalidate=""
 	>
-		<input name="product_id" type="hidden" value="{{movie.ID}}"/>
-		<input name="amount" type="hidden" id="amount" value="{{movie.Price}}"/>
+		<input name="product_id" type="hidden" value={ fmt.Sprintf("%d", movie.ID) }/>
+		<input name="amount" type="hidden" id="amount" value={ fmt.Sprintf("%d", movie.Price) }/>
 		<h3 class="mt-2 text-center mb-3">{ movie.Name }: { FormatCurrency(movie.Price) }</h3>
 		<p>{ movie.Description }</p>
 		<hr/>
