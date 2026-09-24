@@ -9,10 +9,11 @@ templ VirtualTerminalPage(data *models.TemplateData) {
 	@layouts.Base(
 		"Virtual Terminal",
 		data,
-		virtTermPageContent())
+		virtTermPageContent(data.API, data.StringMap["publishable_key"]),
+	)
 }
 
-templ virtTermPageContent() {
+templ virtTermPageContent(api string, pubKey string) {
 	<div class="alert alert-danger text-center d-none" id="card-messages"></div>
 	<form
 		action="/payment-succeeded"
@@ -82,9 +83,7 @@ templ virtTermPageContent() {
 		const payButton = document.getElementById("pay-button");
 		const processing = document.getElementById("processing-payment");
 
-		stripe = Stripe(
-			"pk_test_51UEjO5PlBtVcwUpOMNkZbLBRvSbBxwku42naSf360YMV5gLpK1Ud7UQ0VQqnWVwHU3oMKHdHjiHQk980LTzqWB7b00EBWDkf1k",
-		);
+		stripe = Stripe("{{ pubKey }}");
 
 		function hidePayButton() {
 			payButton.classList.add("d-none");
@@ -111,7 +110,6 @@ templ virtTermPageContent() {
 		}
 
 		function val() {
-			// TODO: Add your Stripe token creation / form submission logic here
 			let form = document.getElementById("charge_form");
 			if (form.checkValidity() == false) {
 				this.event.preventDefault();
@@ -139,7 +137,7 @@ templ virtTermPageContent() {
 				body: JSON.stringify(payload),
 			};
 
-			fetch("http://localhost:4001/api/payment-intent", requestOpts)
+			fetch("{{ api }}/api/payment-intent", requestOpts)
 				.then((resp) => resp.text())
 				.then((resp) => {
 					let data;
