@@ -9,12 +9,14 @@ import (
 
 func (app *application) NewTemplateData(r *http.Request) *models.TemplateData {
 	return &models.TemplateData{
-		StringMap:   make(map[string]string),
-		IntMap:      make(map[string]int),
-		FloatMap:    make(map[string]float32),
-		Data:        make(map[string]interface{}),
-		CurrentYear: time.Now().Year(),
-		API:         app.config.API,
-		CSSVersion:  cssVersion,
+		StringMap:       make(map[string]string),
+		IntMap:          make(map[string]int),
+		FloatMap:        make(map[string]float32),
+		Data:            make(map[string]interface{}),
+		CurrentYear:     time.Now().Year(),
+		API:             app.config.API,
+		CSSVersion:      cssVersion,
+		StripeSecretKey: app.config.Stripe.Secret,
+		StripePubKey:    app.config.Stripe.Key,
 	}
 }

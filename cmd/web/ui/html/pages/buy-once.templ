@@ -4,17 +4,27 @@ import (
 	"ukiran03.com/cinemad/cmd/web/ui/html/layouts"
 	"ukiran03.com/cinemad/cmd/web/ui/html/partials"
 	"ukiran03.com/cinemad/internal/models"
+	"fmt"
 )
 
-templ VirtualTerminalPage(data *models.TemplateData) {
+templ BuyOncePage(data *models.TemplateData) {
 	@layouts.Base(
-		"Virtual Terminal",
+		"Buy one movie",
 		data,
-		virtTermPageContent(data),
+		buyOnePageContent(data),
 	)
 }
 
-templ virtTermPageContent(data *models.TemplateData) {
+templ buyOnePageContent(data *models.TemplateData) {
+	{{ movie := data.Data["movie"].(models.Movie) }}
+	<h2 class="mt-3 text-center">Buy One Movie</h2>
+	<hr/>
+	<img
+		style="width: 175px; height: auto;"
+		alt="Poster for August in the Water (1995)"
+		src="/static/img/august-in-the-water.jpg"
+		class="img-fluid rounded mx-auto d-block"
+	/>
 	<div class="alert alert-danger text-center d-none" id="card-messages"></div>
 	<form
 		action="/payment-succeeded"
@@ -25,17 +35,11 @@ templ virtTermPageContent(data *models.TemplateData) {
 		autocomplete="off"
 		novalidate=""
 	>
-		<div class="mb-3">
-			<label for="amount" class="form-label">Amount</label>
-			<input
-				type="text"
-				class="form-control"
-				id="amount"
-				name="amount"
-				required=""
-				autocomplete="amount-new"
-			/>
-		</div>
+		<input name="product_id" type="hidden" value="{{movie.ID}}"/>
+		<input name="amount" type="hidden" id="amount" value="{{movie.Price}}"/>
+		<h3 class="mt-2 text-center mb-3">{ movie.Name }: { FormatCurrency(movie.Price) }</h3>
+		<p>{ movie.Description }</p>
+		<hr/>
 		<div class="mb-3">
 			<label for="cardholder-name" class="form-label">Cardholder Name</label>
 			<input
@@ -77,4 +81,9 @@ templ virtTermPageContent(data *models.TemplateData) {
 		<input name="payment_currency" type="hidden" value="" id="payment_currency"/>
 	</form>
 	@partials.StripeJS(data)
+}
+
+func FormatCurrency(n int) string {
+	f := float32(n / 100)
+	return fmt.Sprintf("$%.2f", f)
 }

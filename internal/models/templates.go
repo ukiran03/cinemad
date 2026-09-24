@@ -14,8 +14,6 @@ type TemplateData struct {
 	CurrentYear     int
 	API             string
 	CSSVersion      string
-	// User     User
-	// Snippet  Snippet
-	// Snippets []Snippet
-	// Form     interface{}
+	StripeSecretKey string
+	StripePubKey    string
 }

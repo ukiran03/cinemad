@@ -13,7 +13,6 @@ func (app *application) VirtualTerminal(
 	r *http.Request,
 ) {
 	data := app.NewTemplateData(r)
-	data.StringMap["publishable_key"] = app.config.Stripe.Key
 
 	err := pages.VirtualTerminalPage(data).Render(r.Context(), w)
 	if err != nil {
@@ -78,8 +77,7 @@ func (app *application) ChargeOnce(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := app.NewTemplateData(r)
-	data.StringMap["publishable_key"] = app.config.Stripe.Key
-	data.Data["movie"] = movie
+	data.Data["movie"] = movie // DEMO:
 
 	err := pages.BuyOncePage(data).Render(r.Context(), w)
 	if err != nil {

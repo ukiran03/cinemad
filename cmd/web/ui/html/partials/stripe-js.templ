@@ -1,6 +1,10 @@
 package partials
 
-templ StripeJS(api string, pubKey string) {
+import (
+	"ukiran03.com/cinemad/internal/models"
+)
+
+templ StripeJS(data *models.TemplateData) {
 	<script src="https://js.stripe.com/v3/"></script>
 	<script>
 		let card;
@@ -9,7 +13,7 @@ templ StripeJS(api string, pubKey string) {
 		const payButton = document.getElementById("pay-button");
 		const processing = document.getElementById("processing-payment");
 
-		stripe = Stripe("{{ pubKey }}");
+		stripe = Stripe("{{ data.StripePubKey }}");
 
 		function hidePayButton() {
 			payButton.classList.add("d-none");
@@ -63,7 +67,7 @@ templ StripeJS(api string, pubKey string) {
 				body: JSON.stringify(payload),
 			};
 
-			fetch("{{ api }}/api/payment-intent", requestOpts)
+			fetch("{{ data.API }}/api/payment-intent", requestOpts)
 				.then((resp) => resp.text())
 				.then((resp) => {
 					let data;
