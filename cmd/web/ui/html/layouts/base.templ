@@ -2,7 +2,7 @@ package layouts
 
 import "ukiran03.com/cinemad/internal/models"
 
-templ Base(title string, data models.TemplateData, content templ.Component) {
+templ Base(title string, data *models.TemplateData, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang="en">
 		<head>

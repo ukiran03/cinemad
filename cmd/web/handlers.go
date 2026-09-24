@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"ukiran03.com/cinemad/cmd/web/ui/html/pages"
+	"ukiran03.com/cinemad/internal/models"
 )
 
 func (app *application) VirtualTerminal(
@@ -12,6 +13,8 @@ func (app *application) VirtualTerminal(
 	r *http.Request,
 ) {
 	data := app.NewTemplateData(r)
+	data.StringMap["publishable_key"] = app.config.Stripe.Key
+
 	err := pages.VirtualTerminalPage(data).Render(r.Context(), w)
 	if err != nil {
 		http.Error(
@@ -40,28 +43,20 @@ func (app *application) PaymentSucceeded(
 		return
 	}
 
-	// read posted data
-	cardHolder := r.Form.Get("cardholder_name")
-	email := r.Form.Get("cardholder_email")
-	paymentIntent := r.Form.Get("payment_intent")
-	paymentMethod := r.Form.Get("payment_method")
-	paymentAmount := r.Form.Get("payment_amount")
-	paymentCurrency := r.Form.Get("payment_currency")
+	receipt := models.PaymentReceiptData{
+		PaymentIntent: r.Form.Get("payment_intent"),
+		Cardholder:    r.Form.Get("cardholder_name"),
+		Email:         r.Form.Get("cardholder_email"),
+		PaymentMethod: r.Form.Get("payment_method"),
+		Amount:        r.Form.Get("payment_amount"),
+		Currency:      r.Form.Get("payment_currency"),
+	}
 
-	data := make(map[string]interface{})
-	data["cardholder"] = cardHolder
-	data["email"] = email
-	data["pi"] = paymentIntent
-	data["pm"] = paymentMethod
-	data["pa"] = paymentAmount
-	data["pc"] = paymentCurrency
+	data := app.NewTemplateData(r)
 
-	// render templates
-	tData := app.NewTemplateData(r)
-	tData.Data = data
-
-	err = pages.PaymentSucceededPage(tData).Render(r.Context(), w)
+	err = pages.PaymentSucceededPage(receipt, data).Render(r.Context(), w)
 	if err != nil {
+		app.logger.Error(err.Error())
 		http.Error(
 			w,
 			fmt.Sprintf("Error: %v\n", err),

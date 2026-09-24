@@ -5,29 +5,21 @@ import (
 	"ukiran03.com/cinemad/internal/models"
 )
 
-templ PaymentSucceededPage(data models.TemplateData) {
+templ PaymentSucceededPage(receipt models.PaymentReceiptData, data *models.TemplateData) {
 	@layouts.Base(
 		"Payment Succeeded!",
 		data,
-		paymentSucceededPageContent(data.Data),
+		paymentSucceededPageContent(receipt),
 	)
 }
 
-templ paymentSucceededPageContent(dataMap map[string]interface{}) {
-	{{
-		pi := dataMap["pi"].(string)
-		cardholder := dataMap["cardholder"].(string)
-		email := dataMap["email"].(string)
-		pm := dataMap["pm"].(string)
-		pa := dataMap["pa"].(string)
-		pc := dataMap["pc"].(string)
-	}}
+templ paymentSucceededPageContent(r models.PaymentReceiptData) {
 	<h2 class="mt-5">Payment Succeeded</h2>
 	<hr/>
-	<p>Payment Intent: { pi }</p>
-	<p>Cardholder: { cardholder }</p>
-	<p>Email: { email }</p>
-	<p>Payment Method: { pm }</p>
-	<p>Payment Amount: { pa }</p>
-	<p>Payment Currency: { pc }</p>
+	<p>Payment Intent: { r.PaymentIntent }</p>
+	<p>Cardholder: { r.Cardholder }</p>
+	<p>Email: { r.Email }</p>
+	<p>Payment Method: { r.PaymentMethod }</p>
+	<p>Payment Amount: { r.Amount }</p>
+	<p>Payment Currency: { r.Currency }</p>
 }

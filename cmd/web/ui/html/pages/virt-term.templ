@@ -5,7 +5,7 @@ import (
 	"ukiran03.com/cinemad/internal/models"
 )
 
-templ VirtualTerminalPage(data models.TemplateData) {
+templ VirtualTerminalPage(data *models.TemplateData) {
 	@layouts.Base(
 		"Virtual Terminal",
 		data,

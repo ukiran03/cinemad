@@ -7,8 +7,8 @@ import (
 	"ukiran03.com/cinemad/internal/models"
 )
 
-func (app *application) NewTemplateData(r *http.Request) models.TemplateData {
-	return models.TemplateData{
+func (app *application) NewTemplateData(r *http.Request) *models.TemplateData {
+	return &models.TemplateData{
 		StringMap:   make(map[string]string),
 		IntMap:      make(map[string]int),
 		FloatMap:    make(map[string]float32),
