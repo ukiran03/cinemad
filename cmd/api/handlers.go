@@ -28,14 +28,22 @@ func (app *application) GetPaymentIntent(
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		app.logger.Error(err.Error())
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(jsonResp{
+			OK:      false,
+			Message: "Invalid request payload",
+		})
 		return
 	}
 
 	amount, err := strconv.Atoi(payload.Amount)
 	if err != nil {
 		app.logger.Error(err.Error())
-		http.Error(w, "Invalid amount format", http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(jsonResp{
+			OK:      false,
+			Message: "Invalid amount format",
+		})
 		return
 	}
 
@@ -45,23 +53,24 @@ func (app *application) GetPaymentIntent(
 		Currency: payload.Currency,
 	}
 
-	ok := true
+	ok := true // for gateway charges
 	pi, msg, err := card.Charge(payload.Currency, amount)
 	if err != nil {
 		ok = false
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-
 	if ok {
 		out, err := json.MarshalIndent(pi, "", "    ")
 		if err != nil {
 			app.logger.Error(err.Error())
-			http.Error(
-				w, "Internal server error", http.StatusInternalServerError,
-			)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(jsonResp{
+				OK:      false,
+				Message: "Internal server error",
+			})
 			return
 		}
+		w.WriteHeader(http.StatusOK)
 		w.Write(out)
 	} else {
 		j := jsonResp{
@@ -73,11 +82,14 @@ func (app *application) GetPaymentIntent(
 		out, err := json.MarshalIndent(j, "", "    ")
 		if err != nil {
 			app.logger.Error(err.Error())
-			http.Error(
-				w, "Internal server error", http.StatusInternalServerError,
-			)
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(jsonResp{
+				OK:      false,
+				Message: "Internal server error",
+			})
 			return
 		}
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(out)
 	}
 }
