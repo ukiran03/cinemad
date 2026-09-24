@@ -14,7 +14,7 @@ func (app *application) NewTemplateData(r *http.Request) models.TemplateData {
 		FloatMap:    make(map[string]float32),
 		Data:        make(map[string]interface{}),
 		CurrentYear: time.Now().Year(),
-		API:         app.config.api,
+		API:         app.config.API,
 		CSSVersion:  cssVersion,
 	}
 }

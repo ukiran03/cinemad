@@ -40,8 +40,8 @@ func (app *application) GetPaymentIntent(
 	}
 
 	card := cards.Card{
-		Secret:   app.config.stripe.secret,
-		Key:      app.config.stripe.pubkey,
+		Secret:   app.config.Stripe.Secret,
+		Key:      app.config.Stripe.Key,
 		Currency: payload.Currency,
 	}
 

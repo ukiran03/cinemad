@@ -1,51 +1,31 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
+	"ukiran03.com/cinemad/internal/config"
 	"ukiran03.com/cinemad/internal/logger"
 )
 
 const version = "1.0.0"
 
-type config struct {
-	port int
-	env  string
-	db   struct {
-		dsn string
-	}
-	stripe struct {
-		secret string
-		pubkey string
-	}
-}
-
 type application struct {
 	version string
-	config  config
+	config  *config.Config
 	logger  *slog.Logger
 }
 
 func main() {
-	var cfg config
-
-	flag.IntVar(&cfg.port, "port", 4001, "Server port to listen on")
-	flag.StringVar(
-		&cfg.env,
-		"env", "devel",
-		"Application environment {devel|prod|maintenance}",
-	)
-	flag.Parse()
-
-	cfg.stripe.pubkey = os.Getenv("STRIPE_KEY")
-	cfg.stripe.secret = os.Getenv("STRIPE_SECRET")
-
 	logger := logger.NewLogger()
+	cfg, err := config.Load()
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
 
 	app := &application{
 		config:  cfg,
@@ -53,7 +33,7 @@ func main() {
 		version: version,
 	}
 
-	err := app.serve()
+	err = app.serve()
 	if err != nil {
 		logger.Error(err.Error())
 		os.Exit(1)
@@ -62,15 +42,15 @@ func main() {
 
 func (app *application) serve() error {
 	srv := &http.Server{
-		Addr:        fmt.Sprintf(":%d", app.config.port),
+		Addr:        fmt.Sprintf(":%d", app.config.APIPort),
 		Handler:     app.routes(),
 		IdleTimeout: 30 * time.Second,
 		ReadTimeout: 10 * time.Second,
 	}
 	app.logger.Info(
 		"Starting Backend server",
-		"port", app.config.port,
-		"mode", app.config.env,
+		"port", app.config.APIPort,
+		"mode", app.config.Env,
 	)
 
 	return srv.ListenAndServe()
