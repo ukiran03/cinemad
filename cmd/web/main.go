@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"ukiran03.com/cinemad/internal/config"
+	"ukiran03.com/cinemad/internal/driver"
 	"ukiran03.com/cinemad/internal/logger"
 )
 
@@ -29,6 +30,13 @@ func main() {
 		logger.Error(err.Error())
 		os.Exit(1)
 	}
+
+	conn, err := driver.OpenDB(cfg)
+	if err != nil {
+		logger.Error(err.Error())
+		os.Exit(1)
+	}
+	defer conn.Close()
 
 	app := &application{
 		config:  cfg,
